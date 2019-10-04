@@ -1,116 +1,58 @@
 package com.mock.mitek.idv.services;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.DateUtil;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mock.mitek.idv.constants.AppConstants;
 
 @Service
 public class MitekService {
 
+	private static final String CUSTOMER_REF_ID = "customerReferenceId";
 	@Autowired
 	ObjectMapper objectMapper;
 
-	public List<String> getAllFiles() {
-		return getListOfFiles();
-	}
-
-	public JsonNode getAutoResult(JsonNode request) throws IOException {
-		System.out.println(getListOfFiles());
-		return objectMapper.readTree(objectMapper.writeValueAsString(readSheetOption("/Geeks.xls")));
-	}
-
-	public Set<Map<String, String>> readSheetOption(String fileName) throws IOException {
-
-		Set<Map<String, String>> list = new HashSet<>();
-		List<String> keyList = new ArrayList<>();
-		FileInputStream file = new FileInputStream(new File(AppConstants.FILE_LOCATION + fileName));
-
-		Workbook wbread = new HSSFWorkbook(file);
-
-		Sheet sheet = wbread.getSheetAt(0);
-
-		sheet.forEach(row -> {
-			Map<String, String> obj = new HashMap<>();
-			row.forEach(cell -> {
-				if (row.getRowNum() == 0) {
-					keyList.add(printCellValue(cell));
-				} else {
-					obj.put(keyList.get(cell.getColumnIndex()), printCellValue(cell));
-				}
-			});
-			if (!obj.isEmpty()) {
-				list.add(obj);
+	public ResponseEntity<JsonNode> getAutoVerifyResponse(JsonNode node, String api, RequestMethod get) throws IOException {
+		ResponseEntity<JsonNode> result = null;
+		Map<String, String> o = AppConstants.getFileManager().stream().filter(m -> m.get("api").equalsIgnoreCase(api))
+				.findFirst().get();
+		ObjectNode jsonObj = null;
+		if (200 == Double.parseDouble(o.get("statusCode"))) {
+			String obj = o.get("response");
+			String validC = null;
+			jsonObj = (ObjectNode) objectMapper.readTree(obj);
+			if (get.equals(RequestMethod.POST) && !api.equalsIgnoreCase("/connect/token") && !api.equalsIgnoreCase("/oauth2/token")) {
+				validC = node.get(CUSTOMER_REF_ID).asText();
+				AppConstants.setRefId(validC);
 			}
-		});
-		wbread.close();
-		return list;
-	}
-
-	private String printCellValue(Cell cell) {
-		String result = "";
-		switch (cell.getCellType()) {
-		case BOOLEAN:
-			result = String.valueOf(cell.getBooleanCellValue());
-			break;
-		case STRING:
-			result = cell.getRichStringCellValue().getString();
-			break;
-		case NUMERIC:
-			if (DateUtil.isCellDateFormatted(cell)) {
-				result = String.valueOf(cell.getDateCellValue());
-			} else {
-				result = String.valueOf(cell.getNumericCellValue());
+			if (api.equalsIgnoreCase("/api/verify/v2/dossier")) {
+				ObjectNode dmdata = (ObjectNode) jsonObj.get("dossierMetadata");
+				dmdata.put(CUSTOMER_REF_ID, validC);
 			}
-			break;
-		case FORMULA:
-			result = cell.getCellFormula();
-			break;
-		case BLANK:
-			result = "";
-			break;
-		default:
-			result = "";
+			if (api.equalsIgnoreCase("/identity/verify/v3/id-document/manual")) {
+				jsonObj.put(CUSTOMER_REF_ID, validC);
+				AppConstants.setCheckId(jsonObj.get("requestId").asText());
+			}
+			/*
+			 * if(api.equalsIgnoreCase("/identity/v3/poll")) { List<Object> listOfRequest =
+			 * objectMapper.readTree(jsonObj.get("requests"), List.class); }
+			 */
+			result = new ResponseEntity<JsonNode>(jsonObj, HttpStatus.OK);
+		} else {
+			result = new ResponseEntity<JsonNode>(objectMapper.readTree(o.get("response")),
+					HttpStatus.valueOf((int) Double.parseDouble(o.get("statusCode"))));
 		}
-
 		return result;
 	}
 
-	private List<String> getListOfFiles() {
-		File folder = new File(AppConstants.FILE_LOCATION);
-		File[] listOfFiles = folder.listFiles();
-
-		List<String> list = Arrays.stream(listOfFiles).filter(f -> f.getName().contains(".xls")).map(fn -> fn.getName())
-				.collect(Collectors.toList());
-
-		return list;
-	}
-
-	public void setFileName(String fileName) throws IOException {
-		AppConstants.setFileToRead(fileName);
-		AppConstants.setFileManager(readSheetOption(fileName));
-	}
-
-	public String getFileName() {
-		return AppConstants.getFileToRead() != null ? AppConstants.getFileToRead() : "No file selected";
-	}
 }

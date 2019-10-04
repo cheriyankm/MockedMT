@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<script
+	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+<body>
+
+	<div ng-app="myApp" ng-controller="myCtrl">
+
+		File name :
+		<p ng-style="customStyle.style">{{file[0]}}</p>
+		<select ng-model="selectedFile" ng-change="changeFileName()"
+			ng-options="x for x in files"></select>
+		<button ng-disabled="fileDisabled" ng-click="setFile()">Mock
+			by this file</button>
+		<table border="1">
+			<tr>
+				<td>API</td>
+				<td>status code</td>
+				<td>Response</td>
+			</tr>
+			<tr ng-repeat="x in mockedResponses">
+				<td>{{ x.api }}</td>
+				<td>{{ x.statusCode }}</td>
+				<td>{{ x.response }}</td>
+			</tr>
+		</table>
+	</div>
+
+	<script>
+		var app = angular.module('myApp', []);
+		app.controller('myCtrl', function($scope, $http, $window) {
+			$scope.customStyle = {};
+			$scope.fileDisabled = true;
+			$http.get("/mitek/getFile").then(function(response) {
+				$scope.file = response.data;
+				if ($scope.file == "No file selected") {
+					$scope.turnGreen();
+				} else {
+					$scope.turnBlue();
+				}
+			});
+
+			$http.get("/mitek/getFiles").then(function(response) {
+				$scope.files = response.data;
+
+			});
+
+			$scope.turnGreen = function() {
+				$scope.customStyle.style = {
+					"color" : "green"
+				};
+			}
+
+			$scope.turnBlue = function() {
+				$scope.customStyle.style = {
+					"color" : "blue"
+				};
+			}
+
+			$scope.changeFileName = function() {
+				$scope.fileDisabled = false;
+			}
+
+			$scope.setFile = function() {
+				$http.get("/mitek/setFile/" + $scope.selectedFile).then(
+						function(response) {
+							$window.location.reload();
+						});
+			}
+
+			$http.get("/mitek/response/mocked").then(function(response) {
+				$scope.mockedResponses = response.data;
+
+			});
+		});
+	</script>
+
+</body>
+</html>

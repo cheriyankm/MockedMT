@@ -10,6 +10,26 @@ public class AppConstants {
 	private static Set<Map<String, String>> fileManager;
 	
 	private static String fileToRead;
+	
+	private static String checkId;
+	
+	private static String refId;
+
+	public static String getRefId() {
+		return refId;
+	}
+
+	public static void setRefId(String refId) {
+		AppConstants.refId = refId;
+	}
+
+	public static String getCheckId() {
+		return checkId;
+	}
+
+	public static void setCheckId(String checkId) {
+		AppConstants.checkId = checkId;
+	}
 
 	public static Set<Map<String, String>> getFileManager() {
 		return fileManager;
