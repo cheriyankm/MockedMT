@@ -1,15 +1,24 @@
 package com.mock.mitek.idv.services;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 @Service
 public class DemoService {
 
+	@Autowired
+	MitekService mitekService;
+	
 	public void insert() {
 		System.out.println("insert");
 	}
@@ -22,15 +31,9 @@ public class DemoService {
 		System.out.println("delete");
 	}
 
-	public String mockIt(HttpServletRequest request) {
-		System.out.println("inside service***********");
-		System.out.println("Mocked API - "+request.getAttribute("abcd"));
+	public ResponseEntity<JsonNode> mockIt(HttpServletRequest request) throws IOException {
 		
-		for (Entry<String, String[]> entry : request.getParameterMap().entrySet()) {
-			System.out.println("Key = " + entry.getKey() + ", Value = " + Arrays.toString(entry.getValue()));
-		}
-		System.out.println("================================================");
-		return "Successs";
+		return mitekService.getAutoVerifyResponse(null, request.getAttribute("abcd").toString(), RequestMethod.valueOf(request.getMethod()));
 	}
 
 	

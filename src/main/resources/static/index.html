@@ -8,18 +8,22 @@
 
 		File name :
 		<p ng-style="customStyle.style">{{file[0]}}</p>
-		<select ng-model="selectedFile" ng-change="changeFileName()"
+		<font ng-hide="mockedResponses.length==0">and use <b>http://localhost:2883/mockit</b>
+			as Base URL
+		</font><br> <select ng-model="selectedFile" ng-change="changeFileName()"
 			ng-options="x for x in files"></select>
 		<button ng-disabled="fileDisabled" ng-click="setFile()">Mock
 			by this file</button>
 		<table border="1">
 			<tr>
 				<td>API</td>
+				<td>Request method</td>
 				<td>status code</td>
 				<td>Response</td>
 			</tr>
 			<tr ng-repeat="x in mockedResponses">
 				<td>{{ x.api }}</td>
+				<td>{{ x.requestMethod }}</td>
 				<td>{{ x.statusCode }}</td>
 				<td>{{ x.response }}</td>
 			</tr>

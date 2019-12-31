@@ -35,15 +35,11 @@ public class IdvFilter implements Filter {
 
 		String uri = httpServletRequest.getRequestURI();
 		Map<String, String[]> parameterMap = httpServletRequest.getParameterMap();
-		System.out.println("API : " + uri);
 
-		httpServletRequest.setAttribute(MOCKED_API_ATTRIBUTE_KEY, uri.substring(MOCK_API.length()));
-		System.out.println("attr abcd : " + httpServletRequest.getAttribute(MOCKED_API_ATTRIBUTE_KEY));
-
-		for (Entry<String, String[]> entry : parameterMap.entrySet()) {
-			System.out.println("Key = " + entry.getKey() + ", Value = " + Arrays.toString(entry.getValue()));
+		if(uri.length()>MOCK_API.length()) {
+			httpServletRequest.setAttribute(MOCKED_API_ATTRIBUTE_KEY, uri.substring(MOCK_API.length()));
 		}
-		
+
 		if (MOCK_API.equalsIgnoreCase(uri) || uri.contains(MOCK_API)) {
 			//httpServletResponse.sendRedirect("/mockit");
 			httpServletRequest.getRequestDispatcher(MOCK_CONTROLLER_API).forward(request, response);

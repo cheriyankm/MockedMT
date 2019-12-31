@@ -31,7 +31,7 @@ public class MitekService {
 			String obj = o.get("response");
 			String validC = null;
 			jsonObj = (ObjectNode) objectMapper.readTree(obj);
-			if (get.equals(RequestMethod.POST) && !api.equalsIgnoreCase("/connect/token") && !api.equalsIgnoreCase("/oauth2/token")) {
+			/*if (get.equals(RequestMethod.POST) && !api.equalsIgnoreCase("/connect/token") && !api.equalsIgnoreCase("/oauth2/token")) {
 				validC = node.get(CUSTOMER_REF_ID).asText();
 				AppConstants.setRefId(validC);
 			}
@@ -42,7 +42,7 @@ public class MitekService {
 			if (api.equalsIgnoreCase("/identity/verify/v3/id-document/manual")) {
 				jsonObj.put(CUSTOMER_REF_ID, validC);
 				AppConstants.setCheckId(jsonObj.get("requestId").asText());
-			}
+			}*/
 			/*
 			 * if(api.equalsIgnoreCase("/identity/v3/poll")) { List<Object> listOfRequest =
 			 * objectMapper.readTree(jsonObj.get("requests"), List.class); }

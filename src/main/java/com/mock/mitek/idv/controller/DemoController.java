@@ -1,5 +1,6 @@
 package com.mock.mitek.idv.controller;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map.Entry;
 
@@ -7,11 +8,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.mock.mitek.idv.services.DemoService;
 
 @RestController
@@ -36,16 +39,12 @@ public class DemoController {
 	}
 
 	@GetMapping(value = "/mockitcontroller")
-	public String getMockIt(HttpServletRequest request, HttpServletResponse response) {
-		System.out.println("inside controller***********");
-		
+	public ResponseEntity<JsonNode> getMockIt(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		return demoService.mockIt(request);
 	}
 
 	@PostMapping(value = "/mockitcontroller")
-	public String postMockIt(HttpServletRequest request, HttpServletResponse response) {
-		System.out.println("inside controller***********");
-		
+	public ResponseEntity<JsonNode> postMockIt(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		return demoService.mockIt(request);
 	}
 }
