@@ -21,6 +21,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mock.mitek.idv.constants.AppConstants;
@@ -114,5 +115,10 @@ public class MitekHelperService {
 
 	public String getFileName() {
 		return AppConstants.getFileToRead() != null ? AppConstants.getFileToRead() : "No file selected";
+	}
+
+	public JsonNode getAutoResultFromCache() throws JsonProcessingException, IOException {
+		// TODO Auto-generated method stub
+		return objectMapper.readTree(objectMapper.writeValueAsString(AppConstants.getFileManager()));
 	}
 }

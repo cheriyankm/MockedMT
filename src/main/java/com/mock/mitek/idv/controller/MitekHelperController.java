@@ -39,4 +39,9 @@ public class MitekHelperController {
 	public JsonNode getMockedResponse() throws IOException {
 		return mitekHelperService.getAutoResult();
 	}
+
+	@RequestMapping(value = "/response/mocked/cache", method = RequestMethod.GET)
+	public JsonNode getMockedResponseFromCache() throws IOException {
+		return mitekHelperService.getAutoResultFromCache();
+	}
 }
