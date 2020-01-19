@@ -18,7 +18,7 @@ public class DemoService {
 
 	@Autowired
 	MitekService mitekService;
-	
+
 	public void insert() {
 		System.out.println("insert");
 	}
@@ -32,9 +32,9 @@ public class DemoService {
 	}
 
 	public ResponseEntity<JsonNode> mockIt(HttpServletRequest request) throws IOException {
-		
-		return mitekService.getAutoVerifyResponse(null, request.getAttribute("abcd").toString(), RequestMethod.valueOf(request.getMethod()));
+
+		return mitekService.getAutoVerifyResponse(null, request.getAttribute("abcd").toString(),
+				request.getMethod());
 	}
 
-	
 }

@@ -2,19 +2,37 @@
 <html>
 <script
 	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+<link rel="stylesheet" type="text/css" href="mockStyle.css">
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 <body>
 
-	<div ng-app="myApp" ng-controller="myCtrl">
-	<a href="index2.html">Manual version(new)</a>
+	<div ng-app="myApp" ng-controller="myCtrl" class="container">
+		<nav class="navbar navbar-default">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<a class="navbar-brand" href="#">CherryMock</a>
+				</div>
+				<ul class="nav navbar-nav">
+					<li><a href="index.html">Home</a></li>
+					<li class="active"><a href="index1.html">excel upload</a></li>
+					<li><a href="index2.html">Manual entry</a></li>
+				</ul>
+			</div>
+		</nav>
 		File name :
 		<p ng-style="customStyle.style">{{file[0]}}</p>
-		<font ng-hide="mockedResponses.length==0">and use <b>http://localhost:2883/mockit</b>
+		<font ng-hide="mockedResponses.length==0">Use <b>http://localhost:2883/mockit</b>
 			as Base URL
 		</font><br> <select ng-model="selectedFile" ng-change="changeFileName()"
 			ng-options="x for x in files"></select>
-		<button ng-disabled="fileDisabled" ng-click="setFile()">Mock
+		<button class="btn btn-success" ng-disabled="fileDisabled" ng-click="setFile()">Mock
 			by this file</button>
-		<table border="1">
+		<table class="table table-striped">
 			<tr>
 				<td>API</td>
 				<td>Request method</td>
