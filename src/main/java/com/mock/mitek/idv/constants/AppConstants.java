@@ -9,6 +9,8 @@ public class AppConstants {
 	
 	private static Set<Map<String, String>> fileManager;
 	
+	private static Map<String, Set<Map<String, String>>> appApiDetails;
+
 	private static String fileToRead;
 	
 	private static String checkId;
@@ -45,5 +47,13 @@ public class AppConstants {
 
 	public static void setFileToRead(String fileToRead) {
 		AppConstants.fileToRead = fileToRead;
+	}
+	
+	public static Map<String, Set<Map<String, String>>> getAppApiDetails() {
+		return appApiDetails;
+	}
+
+	public static void setAppApiDetails(Map<String, Set<Map<String, String>>> appApiDetails) {
+		AppConstants.appApiDetails = appApiDetails;
 	}
 }

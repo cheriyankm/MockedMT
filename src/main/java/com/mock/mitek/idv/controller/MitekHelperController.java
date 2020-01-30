@@ -25,9 +25,9 @@ public class MitekHelperController {
 		return mitekHelperService.getAllFiles();
 	}
 
-	@RequestMapping(value = "/setFile/{fileName}", method = RequestMethod.GET)
-	public void setFiles(@PathVariable("fileName") String fileName) throws IOException {
-		mitekHelperService.setFileName(fileName);
+	@RequestMapping(value = "/setFile/{fileName}/{appName}", method = RequestMethod.GET)
+	public void setFiles(@PathVariable("fileName") String fileName, @PathVariable String appName) throws IOException {
+		mitekHelperService.setFileName(fileName, appName);
 	}
 
 	@RequestMapping(value = "/getFile", method = RequestMethod.GET)
@@ -40,8 +40,8 @@ public class MitekHelperController {
 		return mitekHelperService.getAutoResult();
 	}
 
-	@RequestMapping(value = "/response/mocked/cache", method = RequestMethod.GET)
-	public JsonNode getMockedResponseFromCache() throws IOException {
-		return mitekHelperService.getAutoResultFromCache();
+	@RequestMapping(value = "/response/mocked/cache/{appName}", method = RequestMethod.GET)
+	public JsonNode getMockedResponseFromCache(@PathVariable String appName) throws IOException {
+		return mitekHelperService.getAutoResultFromCache(appName);
 	}
 }

@@ -1,6 +1,7 @@
 package com.mock.mitek.idv.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,13 +18,13 @@ public class FieldHelperController {
 	@Autowired
 	FieldHelperService fieldHelperService;
 	
-	@PostMapping(value = "/add", consumes = "application/json")
-	public void addField(@RequestBody JsonNode apiDetail) throws JsonProcessingException {
-		fieldHelperService.addField(apiDetail);
+	@PostMapping(value = "/add/{appName}", consumes = "application/json")
+	public void addField(@RequestBody JsonNode apiDetail, @PathVariable String appName) throws JsonProcessingException {
+		fieldHelperService.addField(apiDetail, appName);
 	}
 	
-	@PostMapping(value = "/remove", consumes = "application/json")
-	public void deleteField(@RequestBody JsonNode apiDetail) throws JsonProcessingException {
-		fieldHelperService.deleteField(apiDetail);
+	@PostMapping(value = "/remove/{appName}", consumes = "application/json")
+	public void deleteField(@RequestBody JsonNode apiDetail, @PathVariable String appName) throws JsonProcessingException {
+		fieldHelperService.deleteField(apiDetail, appName);
 	}
 }

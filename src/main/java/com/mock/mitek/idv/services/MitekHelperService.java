@@ -108,17 +108,16 @@ public class MitekHelperService {
 		return list;
 	}
 
-	public void setFileName(String fileName) throws IOException {
+	public void setFileName(String fileName, String appName) throws IOException {
 		AppConstants.setFileToRead(fileName);
-		AppConstants.setFileManager(readSheetOption(fileName));
+		AppConstants.getAppApiDetails().put(appName, readSheetOption(fileName));
 	}
 
 	public String getFileName() {
 		return AppConstants.getFileToRead() != null ? AppConstants.getFileToRead() : "No file selected";
 	}
 
-	public JsonNode getAutoResultFromCache() throws JsonProcessingException, IOException {
-		// TODO Auto-generated method stub
-		return objectMapper.readTree(objectMapper.writeValueAsString(AppConstants.getFileManager()));
+	public JsonNode getAutoResultFromCache(String appName) throws JsonProcessingException, IOException {
+		return objectMapper.readTree(objectMapper.writeValueAsString(AppConstants.getAppApiDetails().get(appName)));
 	}
 }

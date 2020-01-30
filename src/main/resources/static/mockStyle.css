@@ -1,3 +1,12 @@
 .container{
 	margin-top: 5%;
 }
+
+.adisabled {
+  cursor: not-allowed;
+  opacity: .65;
+}
+
+.adisabled:hover { text-decoration: none; }
+.adisabled:focus { text-decoration: none; }
+.adisabled:active { text-decoration: none; }

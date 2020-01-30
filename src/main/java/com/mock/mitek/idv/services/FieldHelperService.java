@@ -16,20 +16,24 @@ import com.mock.mitek.idv.constants.AppConstants;
 @Service
 public class FieldHelperService {
 
-	public void addField(JsonNode apiDetail) throws JsonProcessingException {
-		System.out.println("inside field service! : "+new ObjectMapper().writeValueAsString(apiDetail));
+	public void addField(JsonNode apiDetail, String appName) throws JsonProcessingException {
 		Map<String, String> apiDetails = new HashMap<>();
 		
 		apiDetails = new ObjectMapper().convertValue(apiDetail, new TypeReference<Map<String, String>>(){});
-		Set<Map<String, String>> list = AppConstants.getFileManager()==null?new HashSet<>():AppConstants.getFileManager();
+		Set<Map<String, String>> list = null;
+		if(AppConstants.getAppApiDetails().get(appName) == null) {
+			list = new HashSet<>();
+		}else {
+			list = AppConstants.getAppApiDetails().get(appName);
+		}
 		list.add(apiDetails);
-		AppConstants.setFileManager(list);
+		AppConstants.getAppApiDetails().put(appName, list);
 	}
 
-	public void deleteField(JsonNode apiDetail) {
-		Set<Map<String, String>> details = AppConstants.getFileManager();
+	public void deleteField(JsonNode apiDetail, String appName) {
+		Set<Map<String, String>> details = AppConstants.getAppApiDetails().get(appName);
 		details.remove(new ObjectMapper().convertValue(apiDetail, new TypeReference<Map<String, String>>(){}));
-		AppConstants.setFileManager(details);
+		AppConstants.getAppApiDetails().put(appName, details);
 	}
 
 }

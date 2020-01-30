@@ -22,6 +22,11 @@
 					<li><a href="index1.html">excel upload</a></li>
 					<li class="active"><a href="index2.html">Manual entry</a></li>
 				</ul>
+				<div class="input-group col-sm-3">
+					<span class="input-group-addon">Select App</span> <select
+						class="form-control" ng-model="selectedApp"
+						ng-change="chooseApp()" ng-options="x for x in allApps" ng-disabled="disableDrop"></select>
+				</div>
 			</div>
 		</nav>
 		<font
@@ -77,6 +82,30 @@
 			$scope.mockedResponses = [];
 			$scope.fileDisabled = true;
 			$scope.allMethods = ["POST","GET","PUT","DELTE","PATCH"];
+			
+			$scope.allCockies = document.cookie;
+			if($scope.allCockies == ""){
+				location.replace("/");
+			}
+		    var cookiePair = $scope.allCockies.split("=");
+		        
+		    if("finalAppName" == cookiePair[0].trim()) {
+		        $scope.finalAppName = decodeURIComponent(cookiePair[1]);
+		        $scope.selectedApp = $scope.finalAppName;
+		    }
+		    
+		    $http.get("/app/getallapp").then(function(response) {
+				$scope.allApps = response.data;
+				if($scope.allApps.length == 0){
+					location.replace("/");
+				}
+			});
+			
+		    $scope.chooseApp = function(){
+				document.cookie = "finalAppName="+$scope.selectedApp+";";
+				$window.location.reload();
+			}
+		    
 			$http.get("/mitek/getFile").then(function(response) {
 				$scope.file = response.data;
 				if ($scope.file == "No file selected") {
@@ -102,8 +131,7 @@
 				$scope.fileDisabled = false;
 			}
 
-			$http.get("/mitek/response/mocked/cache").then(function(response) {
-				console.log("response is --> "+response.data)
+			$http.get("/mitek/response/mocked/cache/"+$scope.finalAppName).then(function(response) {
 				$scope.mockedResponses = response.data;
 
 			});
@@ -114,7 +142,6 @@
 				$scope.msg = "";
 				$scope.flag = false;
 				
-				console.log($scope.apiDetails);
 				if(Object.keys($scope.apiDetails).length < 4){
 					$scope.flag = true;
 					$scope.msg = "fill all fields!";
@@ -129,9 +156,6 @@
 				
 				if(!$scope.flag){
 				angular.forEach($scope.apiDetails, function(value, key) {
-					console.log("key : "+key);
-					console.log("value : "+value);
-					console.log("size : "+Object.keys($scope.apiDetails).length);
 					if(Object.keys($scope.apiDetails).length < 4 || value==undefined || value==""){
 						$scope.flag = true;
 						$scope.msg = "fill all fields!";
@@ -150,7 +174,6 @@
 						}
 						if(key=="response"){
 							try {
-								console.log("inside response : "+JSON.parse(value));
 							      JSON.parse(value);
 							    } catch (e) {
 							      $scope.flag = true;
@@ -164,14 +187,12 @@
 				if(!$scope.flag){
 					var req = {
 							 method: 'POST',
-							 url: '/cherry/add',
+							 url: "/cherry/add/"+$scope.finalAppName,
 							 data: $scope.apiDetails
 							}
 
 							$http(req).then(function(){
-								console.log("success");
 								//$window.location.reload();
-								console.log($scope.mockedResponses);
 								if($scope.mockedResponses == null){
 									$scope.mockedResponses = [$scope.apiDetails];
 								}else{
@@ -179,7 +200,6 @@
 								}
 								$scope.apiDetails={};
 							}, function(){
-								console.log("failed")
 								});
 				}else{
 					console.log("flag is "+$scope.flag);
@@ -190,16 +210,13 @@
 				
 				var req = {
 						 method: 'POST',
-						 url: '/cherry//remove',
+						 url: "/cherry/remove"+$scope.finalAppName,
 						 data: details
 						}
 
 						$http(req).then(function(){
-							console.log("success");
-							console.log(details);
 							$scope.mockedResponses.splice($scope.mockedResponses.indexOf(details), 1);
 							details.statusCode = parseInt(details.statusCode);
-							console.log(details);
 							$scope.apiDetails = details;
 						}, function(){
 							console.log("failed")

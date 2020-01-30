@@ -22,6 +22,11 @@
 					<li class="active"><a href="index1.html">excel upload</a></li>
 					<li><a href="index2.html">Manual entry</a></li>
 				</ul>
+				<div class="input-group col-sm-3">
+					<span class="input-group-addon">Select App</span> <select
+						class="form-control" ng-model="selectedApp"
+						ng-change="chooseApp()" ng-options="x for x in allApps" ng-disabled="disableDrop"></select>
+				</div>
 			</div>
 		</nav>
 		File name :
@@ -53,6 +58,30 @@
 		app.controller('myCtrl', function($scope, $http, $window) {
 			$scope.customStyle = {};
 			$scope.fileDisabled = true;
+			
+			$scope.allCockies = document.cookie;
+			if($scope.allCockies == ""){
+				location.replace("/");
+			}
+		    var cookiePair = $scope.allCockies.split("=");
+		        
+		    if("finalAppName" == cookiePair[0].trim()) {
+		        $scope.finalAppName = decodeURIComponent(cookiePair[1]);
+		        $scope.selectedApp = $scope.finalAppName;
+		    }
+		    
+		    $http.get("/app/getallapp").then(function(response) {
+				$scope.allApps = response.data;
+				if($scope.allApps.length == 0){
+					location.replace("/");
+				}
+			});
+			
+		    $scope.chooseApp = function(){
+				document.cookie = "finalAppName="+$scope.selectedApp+";";
+				$window.location.reload();
+			}
+			
 			$http.get("/mitek/getFile").then(function(response) {
 				$scope.file = response.data;
 				if ($scope.file == "No file selected") {
@@ -84,13 +113,13 @@
 			}
 
 			$scope.setFile = function() {
-				$http.get("/mitek/setFile/" + $scope.selectedFile).then(
+				$http.get("/mitek/setFile/" + $scope.selectedFile+"/"+$scope.finalAppName).then(
 						function(response) {
 							$window.location.reload();
 						});
 			}
 
-			$http.get("/mitek/response/mocked").then(function(response) {
+			$http.get("/mitek/response/mocked/cache/"+$scope.finalAppName).then(function(response) {
 				$scope.mockedResponses = response.data;
 
 			});

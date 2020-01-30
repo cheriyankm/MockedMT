@@ -11,7 +11,7 @@
 	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 <body>
 
-	<div class="container">
+	<div ng-app="myApp" ng-controller="myCtrl" class="container">
 		<nav class="navbar navbar-default">
 			<div class="container-fluid">
 				<div class="navbar-header">
@@ -19,16 +19,100 @@
 				</div>
 				<ul class="nav navbar-nav">
 					<li class="active"><a href="index.html">Home</a></li>
-					<li><a href="index1.html">excel upload</a></li>
-					<li><a href="index2.html">Manual entry</a></li>
+					<li><a href="index1.html" ng-class="{'adisabled': !usable}">excel
+							upload</a></li>
+					<li><a href="index2.html" ng-class="{'adisabled': !usable}">Manual
+							entry</a></li>
 				</ul>
+				<div class="input-group col-sm-3">
+					<span class="input-group-addon">Select App</span> <select
+						class="form-control" ng-model="selectedApp"
+						ng-change="chooseApp()" ng-options="x for x in allApps" ng-disabled="disableDrop"></select>
+				</div>
 			</div>
 		</nav>
 		<div class="jumbotron">
 			<h1>Welcome to CherryMock</h1>
+			<font style="color: red;">{{message}}</font>
+			<div class="input-group col-sm-9">
+				<span class="input-group-addon">Your app name</span>
+				<input type="text" class="form-control col-sm-6" ng-model="appName">
+				<span class="input-group-btn">
+					<button ng-click="addNewApp(appName)" class="btn btn-success">Add
+				new app</button>
+				</span>
+			</div>
 		</div>
 	</div>
 
+	<script>
+		var app = angular.module('myApp', []);
+		app
+				.controller(
+						'myCtrl',
+						function($scope, $http, $window) {
+							$scope.finalAppName = "";
+							$scope.allCockies = document.cookie;
+							$scope.usable = false;
+							$scope.disableDrop = false;
+							var cookiePair = $scope.allCockies.split("=");
 
+							if ("finalAppName" == cookiePair[0].trim()) {
+								$scope.finalAppName = decodeURIComponent(cookiePair[1]);
+								$scope.selectedApp = $scope.finalAppName;
+							}
+
+							if ($scope.finalAppName == "") {
+								$scope.message = "Please select/create an app";
+								$scope.usable = true;
+								$scope.disableDrop = true;
+							} else {
+								$http
+										.get("/app/getallapp")
+										.then(
+												function(response) {
+													$scope.allApps = response.data;
+													if ($scope.allApps.length == 0) {
+														$scope.disableDrop = true;
+														var res = document.cookie;
+														var multiple = res
+																.split(";");
+														for (var i = 0; i < multiple.length; i++) {
+															var key = multiple[i]
+																	.split("=");
+															document.cookie = key[0]
+																	+ " =; expires = Thu, 01 Jan 1970 00:00:00 UTC";
+														}
+														$scope.usable = true;
+													}
+												});
+							}
+
+							$scope.chooseApp = function() {
+								document.cookie = "finalAppName="
+										+ $scope.selectedApp + ";";
+							}
+
+							$scope.addNewApp = function(appName) {
+								$http
+										.get("/app/insert/" + appName)
+										.then(
+												function(response) {
+													if (response.data.key == "error") {
+														$scope.message = response.data.value;
+													}
+													if (response.data.key == "success") {
+														$scope.finalAppName = response.data.value;
+														document.cookie = "finalAppName="
+																+ $scope.finalAppName
+																+ ";";
+														$scope.message = "";
+														$window.location
+																.reload();
+													}
+												});
+							}
+						});
+	</script>
 </body>
 </html>
