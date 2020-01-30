@@ -10,3 +10,7 @@
 .adisabled:hover { text-decoration: none; }
 .adisabled:focus { text-decoration: none; }
 .adisabled:active { text-decoration: none; }
+
+.disabled {
+  cursor: not-allowed;
+}

@@ -31,7 +31,7 @@
 		</nav>
 		File name :
 		<p ng-style="customStyle.style">{{file[0]}}</p>
-		<font ng-hide="mockedResponses.length==0">Use <b>http://localhost:2883/mockit</b>
+		<font ng-hide="mockedResponses.length==0">Use <b>http://localhost:2883/mockit/{app name}</b>
 			as Base URL
 		</font><br> <select ng-model="selectedFile" ng-change="changeFileName()"
 			ng-options="x for x in files"></select>

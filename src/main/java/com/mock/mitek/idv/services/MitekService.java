@@ -27,9 +27,14 @@ public class MitekService {
 
 	public ResponseEntity<JsonNode> getAutoVerifyResponse(JsonNode node, String api, RequestMethod method, String a)
 			throws IOException {
+		return null;
+	}
+
+	public ResponseEntity<JsonNode> getAutoVerifyResponse(JsonNode node, String appName, String api,
+			RequestMethod method, String a) throws IOException {
 		ResponseEntity<JsonNode> result = null;
-		Map<String, String> o = AppConstants.getFileManager().stream().filter(m -> m.get("api").equalsIgnoreCase(api))
-				.findFirst().get();
+		Map<String, String> o = AppConstants.getAppApiDetails().get(appName).stream()
+				.filter(m -> m.get("api").equalsIgnoreCase(api)).findFirst().get();
 		ObjectNode jsonObj = null;
 		if (200 == Double.parseDouble(o.get("statusCode"))) {
 			String obj = o.get("response");
@@ -58,10 +63,11 @@ public class MitekService {
 		return result;
 	}
 
-	public ResponseEntity<JsonNode> getAutoVerifyResponse(JsonNode node, String api, String method) throws IOException {
+	public ResponseEntity<JsonNode> getAutoVerifyResponse(JsonNode node, String appName, String api, String method)
+			throws IOException {
 		ResponseEntity<JsonNode> result = null;
 		try {
-			Map<String, String> o = AppConstants.getFileManager().stream()
+			Map<String, String> o = AppConstants.getAppApiDetails().get(appName).stream()
 					.filter(m -> m.get("api").equalsIgnoreCase(api) && m.get("requestMethod").equalsIgnoreCase(method))
 					.findFirst().get();
 
@@ -69,12 +75,12 @@ public class MitekService {
 					HttpStatus.valueOf((int) Double.parseDouble(o.get("statusCode"))));
 		} catch (NoSuchElementException e) {
 			String message = "{\"errorMessage\":\"There is no ".concat(api).concat(" API available\"}");
-			Map<String, String> o = doRegexCheck(api, method);
+			Map<String, String> o = doRegexCheck(api, appName, method);
 			JsonNode body = null;
-			if(o == null) {
+			if (o == null) {
 				body = objectMapper.readTree(message);
 				return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
-			}else {
+			} else {
 				body = objectMapper.readTree(o.get("response"));
 				return new ResponseEntity<>(body, HttpStatus.valueOf((int) Double.parseDouble(o.get("statusCode"))));
 			}
@@ -85,48 +91,47 @@ public class MitekService {
 		}
 	}
 
-	private Map<String, String> doRegexCheck(String api, String method) {
+	private Map<String, String> doRegexCheck(String api, String appName, String method) {
 		Map<String, String> result = null;
-		for(Map<String, String> a : AppConstants.getFileManager()) {
-			if(testRegex(a.get("api"), api)) {
+		for (Map<String, String> a : AppConstants.getAppApiDetails().get(appName)) {
+			if (testRegex(a.get("api"), api) && a.get("requestMethod").equalsIgnoreCase(method)) {
 				result = a;
 				break;
 			}
 		}
 		return result;
 	}
-	
+
 	private boolean testRegex(String storedApi, String api) {
-		
-		String finalRegex="^";
+
+		String finalRegex = "^";
 		boolean flag = false;
-		if(storedApi.contains("{") && storedApi.contains("}")) {
+		if (storedApi.contains("{") && storedApi.contains("}")) {
 			char[] charArray = storedApi.toCharArray();
-			for(Character k : charArray) {
-				if(k.equals('{')) {
+			for (Character k : charArray) {
+				if (k.equals('{')) {
 					flag = true;
 					finalRegex = finalRegex.concat("[A-Za-z0-9_@.%#&+-]*");
-				}else if(k.equals('}')){
+				} else if (k.equals('}')) {
 					flag = false;
-				}else {
-					if(!flag) {
+				} else {
+					if (!flag) {
 						finalRegex = finalRegex.concat(k.toString());
 					}
 				}
 			}
 			finalRegex = finalRegex.concat("$");
-			flag=false;
-		}else {
-			flag=true;
+			flag = false;
+		} else {
+			flag = true;
 		}
-		if(!flag) {
-			Pattern p = Pattern.compile(finalRegex);//. represents single character  
-			Matcher m = p.matcher(api);  
+		if (!flag) {
+			Pattern p = Pattern.compile(finalRegex);// . represents single character
+			Matcher m = p.matcher(api);
 			return m.matches();
-		}else {
+		} else {
 			return false;
 		}
 	}
 
-	
 }

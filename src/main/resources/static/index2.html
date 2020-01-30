@@ -30,7 +30,7 @@
 			</div>
 		</nav>
 		<font
-			ng-hide="mockedResponses.length==0">Use <b>http://localhost:2883/mockit</b>
+			ng-hide="mockedResponses.length==0">Use <b>http://localhost:2883/mockit/{app name}</b>
 			as Base URL
 		</font><br> <font ng-show="flag">{{msg}}</font>
 		<form>
@@ -210,7 +210,7 @@
 				
 				var req = {
 						 method: 'POST',
-						 url: "/cherry/remove"+$scope.finalAppName,
+						 url: "/cherry/remove/"+$scope.finalAppName,
 						 data: details
 						}
 

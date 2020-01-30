@@ -34,6 +34,7 @@ public class FieldHelperService {
 		Set<Map<String, String>> details = AppConstants.getAppApiDetails().get(appName);
 		details.remove(new ObjectMapper().convertValue(apiDetail, new TypeReference<Map<String, String>>(){}));
 		AppConstants.getAppApiDetails().put(appName, details);
+		System.out.println("s"+AppConstants.getAppApiDetails());
 	}
 
 }

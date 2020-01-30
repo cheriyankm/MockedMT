@@ -1,9 +1,7 @@
 package com.mock.mitek.idv.filter;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -13,19 +11,20 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.catalina.core.ApplicationFilterChain;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 @Component
 @Order(value = 1)
 public class IdvFilter implements Filter {
-	
-	final static String MOCK_API = "/mockit";
-	
-	final static String MOCK_CONTROLLER_API = "/mockitcontroller";
-	
-	final static String MOCKED_API_ATTRIBUTE_KEY = "abcd";
+
+	private final static String MOCK_API = "/mockit";
+
+	private final static String MOCK_CONTROLLER_API = "/mockitcontroller";
+
+	private final static String MOCKED_API_ATTRIBUTE_KEY = "abcd";
+
+	private static final String APP_NAME = "appName";
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
@@ -36,12 +35,15 @@ public class IdvFilter implements Filter {
 		String uri = httpServletRequest.getRequestURI();
 		Map<String, String[]> parameterMap = httpServletRequest.getParameterMap();
 
-		if(uri.length()>MOCK_API.length()) {
-			httpServletRequest.setAttribute(MOCKED_API_ATTRIBUTE_KEY, uri.substring(MOCK_API.length()));
+		if (uri.contains(MOCK_API) && uri.length() > MOCK_API.length()) {
+			String appName = uri.substring(MOCK_API.length()).split("/")[1];
+			httpServletRequest.setAttribute(MOCKED_API_ATTRIBUTE_KEY,
+					uri.substring(MOCK_API.length() + appName.length() + 1));
+			httpServletRequest.setAttribute(APP_NAME, appName);
 		}
 
 		if (MOCK_API.equalsIgnoreCase(uri) || uri.contains(MOCK_API)) {
-			//httpServletResponse.sendRedirect("/mockit");
+			// httpServletResponse.sendRedirect("/mockit");
 			httpServletRequest.getRequestDispatcher(MOCK_CONTROLLER_API).forward(request, response);
 		} else {
 			chain.doFilter(request, response);

@@ -33,8 +33,8 @@ public class DemoService {
 
 	public ResponseEntity<JsonNode> mockIt(HttpServletRequest request) throws IOException {
 
-		return mitekService.getAutoVerifyResponse(null, request.getAttribute("abcd").toString(),
-				request.getMethod());
+		return mitekService.getAutoVerifyResponse(null, request.getAttribute("appName").toString(),
+				request.getAttribute("abcd").toString(), request.getMethod());
 	}
 
 }

@@ -19,9 +19,9 @@
 				</div>
 				<ul class="nav navbar-nav">
 					<li class="active"><a href="index.html">Home</a></li>
-					<li><a href="index1.html" ng-class="{'adisabled': !usable}">excel
+					<li><a href="index1.html">excel
 							upload</a></li>
-					<li><a href="index2.html" ng-class="{'adisabled': !usable}">Manual
+					<li><a href="index2.html">Manual
 							entry</a></li>
 				</ul>
 				<div class="input-group col-sm-3">
@@ -36,7 +36,7 @@
 			<font style="color: red;">{{message}}</font>
 			<div class="input-group col-sm-9">
 				<span class="input-group-addon">Your app name</span>
-				<input type="text" class="form-control col-sm-6" ng-model="appName">
+				<input type="text" class="form-control col-sm-6" ng-model="appName" required="required" placeholder="Create your new app">
 				<span class="input-group-btn">
 					<button ng-click="addNewApp(appName)" class="btn btn-success">Add
 				new app</button>
@@ -53,10 +53,14 @@
 						function($scope, $http, $window) {
 							$scope.finalAppName = "";
 							$scope.allCockies = document.cookie;
-							$scope.usable = false;
+							$scope.usable = true;
 							$scope.disableDrop = false;
 							var cookiePair = $scope.allCockies.split("=");
 
+							$scope.disabled = function() {
+								$scope.usable = true;
+							}
+							
 							if ("finalAppName" == cookiePair[0].trim()) {
 								$scope.finalAppName = decodeURIComponent(cookiePair[1]);
 								$scope.selectedApp = $scope.finalAppName;
@@ -64,7 +68,6 @@
 
 							if ($scope.finalAppName == "") {
 								$scope.message = "Please select/create an app";
-								$scope.usable = true;
 								$scope.disableDrop = true;
 							} else {
 								$http
@@ -73,6 +76,7 @@
 												function(response) {
 													$scope.allApps = response.data;
 													if ($scope.allApps.length == 0) {
+														$scope.usable = false;
 														$scope.disableDrop = true;
 														var res = document.cookie;
 														var multiple = res
@@ -83,7 +87,6 @@
 															document.cookie = key[0]
 																	+ " =; expires = Thu, 01 Jan 1970 00:00:00 UTC";
 														}
-														$scope.usable = true;
 													}
 												});
 							}
