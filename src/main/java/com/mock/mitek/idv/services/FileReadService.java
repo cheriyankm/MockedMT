@@ -27,7 +27,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mock.mitek.idv.constants.AppConstants;
 
 @Service
-public class MitekHelperService {
+public class FileReadService {
 
 	@Autowired
 	ObjectMapper objectMapper;

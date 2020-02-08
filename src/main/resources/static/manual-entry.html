@@ -19,8 +19,8 @@
 				</div>
 				<ul class="nav navbar-nav">
 					<li><a href="index.html">Home</a></li>
-					<li><a href="index1.html">excel upload</a></li>
-					<li class="active"><a href="index2.html">Manual entry</a></li>
+					<li><a href="excel-upload.html">excel upload</a></li>
+					<li class="active"><a href="manual-entry.html">Manual entry</a></li>
 				</ul>
 				<div class="input-group col-sm-3">
 					<span class="input-group-addon">Select App</span> <select
@@ -69,7 +69,7 @@
 				<td>{{ x.api }}</td>
 				<td>{{ x.requestMethod }}</td>
 				<td>{{ x.statusCode }}</td>
-				<td>{{ x.response }}</td>
+				<td class="cell expand-maximum-on-hover">{{ x.response }}</td>
 			</tr>
 		</table>
 	</div>
@@ -81,7 +81,7 @@
 			$scope.apiDetails = {};
 			$scope.mockedResponses = [];
 			$scope.fileDisabled = true;
-			$scope.allMethods = ["POST","GET","PUT","DELTE","PATCH"];
+			$scope.allMethods = ["POST","GET","PUT","DELETE","PATCH"];
 			
 			$scope.allCockies = document.cookie;
 			if($scope.allCockies == ""){
@@ -199,8 +199,10 @@
 									$scope.mockedResponses.push($scope.apiDetails);
 								}
 								$scope.apiDetails={};
-							}, function(){
-								});
+							}, function(error){
+								$scope.msg = error.data.message;
+								$scope.flag = true;
+							});
 				}else{
 					console.log("flag is "+$scope.flag);
 				}

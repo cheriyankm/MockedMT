@@ -9,10 +9,10 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 @SpringBootApplication
-public class IdvApplication {
+public class MockAppApplication {
 
 	public static void main(String[] args) throws JsonParseException, JsonMappingException, IOException {
-		SpringApplication.run(IdvApplication.class, args);
+		SpringApplication.run(MockAppApplication.class, args);
 	}
 
 }

@@ -11,37 +11,37 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.mock.mitek.idv.services.MitekHelperService;
+import com.mock.mitek.idv.services.FileReadService;
 
 @RestController
 @RequestMapping("/mitek")
-public class MitekHelperController {
+public class MockHelperController {
 
 	@Autowired
-	MitekHelperService mitekHelperService;
+	FileReadService fileReadService;
 
 	@RequestMapping(value = "/getFiles", method = RequestMethod.GET)
 	public List<String> getFiles() throws IOException {
-		return mitekHelperService.getAllFiles();
+		return fileReadService.getAllFiles();
 	}
 
 	@RequestMapping(value = "/setFile/{fileName}/{appName}", method = RequestMethod.GET)
 	public void setFiles(@PathVariable("fileName") String fileName, @PathVariable String appName) throws IOException {
-		mitekHelperService.setFileName(fileName, appName);
+		fileReadService.setFileName(fileName, appName);
 	}
 
 	@RequestMapping(value = "/getFile", method = RequestMethod.GET)
 	public List<String> getFile() throws IOException {
-		return Collections.singletonList(mitekHelperService.getFileName());
+		return Collections.singletonList(fileReadService.getFileName());
 	}
 
 	@RequestMapping(value = "/response/mocked", method = RequestMethod.GET)
 	public JsonNode getMockedResponse() throws IOException {
-		return mitekHelperService.getAutoResult();
+		return fileReadService.getAutoResult();
 	}
 
 	@RequestMapping(value = "/response/mocked/cache/{appName}", method = RequestMethod.GET)
 	public JsonNode getMockedResponseFromCache(@PathVariable String appName) throws IOException {
-		return mitekHelperService.getAutoResultFromCache(appName);
+		return fileReadService.getAutoResultFromCache(appName);
 	}
 }
