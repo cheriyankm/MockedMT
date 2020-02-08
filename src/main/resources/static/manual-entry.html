@@ -15,51 +15,54 @@
 		<nav class="navbar navbar-default">
 			<div class="container-fluid">
 				<div class="navbar-header">
-					<a class="navbar-brand" href="index.html">CherryMock</a>
+					<a class="navbar-brand" href="index.html">Service Mock</a>
 				</div>
 				<ul class="nav navbar-nav">
 					<li><a href="index.html">Home</a></li>
 					<li><a href="excel-upload.html">excel upload</a></li>
-					<li class="active"><a href="manual-entry.html">Manual entry</a></li>
+					<li class="active"><a href="manual-entry.html">Manual
+							entry</a></li>
 				</ul>
 				<div class="input-group col-sm-3">
 					<span class="input-group-addon">Select App</span> <select
 						class="form-control" ng-model="selectedApp"
-						ng-change="chooseApp()" ng-options="x for x in allApps" ng-disabled="disableDrop"></select>
+						ng-change="chooseApp()" ng-options="x for x in allApps"
+						ng-disabled="disableDrop"></select>
 				</div>
 			</div>
 		</nav>
-		<font
-			ng-hide="mockedResponses.length==0">Use <b>http://localhost:2883/mockit/{app name}</b>
-			as Base URL
-		</font><br> <font ng-show="flag">{{msg}}</font>
-		<form>
-			<table class="table">
-				<tr>
-					<td>API</td>
-					<td>Request method</td>
-					<td>Status code</td>
-					<td>Response</td>
-				</tr>
-				<tr>
-					<td><input type="text" ng-model="apiDetails.api"
-						placeholder="API" required="required"></td>
-					<td><select ng-model="apiDetails.requestMethod"
-						ng-options="x for x in allMethods" required="required"
-						placeholder="Request Method"></select></td>
-					<td><input type="number" ng-model="apiDetails.statusCode"
-						placeholder="status code" required="required"></td>
-					<td><textarea ng-model="apiDetails.response"
-							placeholder="Response" required="required"></textarea></td>
-					<td><input type="submit" class="btn btn-success" value="Add"
-						ng-click="addNewApi()"></td>
-				</tr>
-			</table>
-		</form>
-		<table class="table table-striped">
+		<div class="jumbotron col-sm-12">
+			<font ng-hide="mockedResponses.length==0">Use <b>http://localhost:2883/mockit/{app
+					name}</b> as Base URL
+			</font><br> <font ng-show="flag">{{msg}}</font>
+			<form>
+				<table class="table">
+					<tr>
+						<td>API<span class="required">*</span></td>
+						<td>Request method<span class="required">*</span></td>
+						<td>Status code<span class="required">*</span></td>
+						<td>Response<span class="required">*</span></td>
+					</tr>
+					<tr>
+						<td><input type="text" class="form-control" ng-model="apiDetails.api"
+							placeholder="API" required="required"></td>
+						<td><select class="form-control" ng-model="apiDetails.requestMethod"
+							ng-options="x for x in allMethods" required="required"
+							placeholder="Request Method"></select></td>
+						<td><input type="number" class="form-control" ng-model="apiDetails.statusCode"
+							placeholder="status code" required="required"></td>
+						<td><textarea class="form-control" ng-model="apiDetails.response"
+								placeholder="JSON Response" required="required"></textarea></td>
+						<td><input type="submit" class="btn btn-success" value="Add"
+							ng-click="addNewApi()"></td>
+					</tr>
+				</table>
+			</form>
+		</div>
+		<table class="table table-striped" ng-show="!noApi">
 			<tr>
 				<td></td>
-				<td>API</td>
+				<td>Mock API</td>
 				<td>Request method</td>
 				<td>Status code</td>
 				<td>Response</td>
@@ -72,159 +75,205 @@
 				<td class="cell expand-maximum-on-hover">{{ x.response }}</td>
 			</tr>
 		</table>
+		<footer class="col-sm-12 copyright text-center">
+			Copyright &copy; 2020 <span>Infosys</span>
+		</footer>
 	</div>
 
 	<script>
 		var app = angular.module('myApp', []);
-		app.controller('myCtrl', function($scope, $http, $window) {
-			$scope.customStyle = {};
-			$scope.apiDetails = {};
-			$scope.mockedResponses = [];
-			$scope.fileDisabled = true;
-			$scope.allMethods = ["POST","GET","PUT","DELETE","PATCH"];
-			
-			$scope.allCockies = document.cookie;
-			if($scope.allCockies == ""){
-				location.replace("/");
-			}
-		    var cookiePair = $scope.allCockies.split("=");
-		        
-		    if("finalAppName" == cookiePair[0].trim()) {
-		        $scope.finalAppName = decodeURIComponent(cookiePair[1]);
-		        $scope.selectedApp = $scope.finalAppName;
-		    }
-		    
-		    $http.get("/app/getallapp").then(function(response) {
-				$scope.allApps = response.data;
-				if($scope.allApps.length == 0){
-					location.replace("/");
-				}
-			});
-			
-		    $scope.chooseApp = function(){
-				document.cookie = "finalAppName="+$scope.selectedApp+";";
-				$window.location.reload();
-			}
-		    
-			$http.get("/mitek/getFile").then(function(response) {
-				$scope.file = response.data;
-				if ($scope.file == "No file selected") {
-					$scope.turnGreen();
-				} else {
-					$scope.turnBlue();
-				}
-			});
+		app
+				.controller(
+						'myCtrl',
+						function($scope, $http, $window) {
+							$scope.customStyle = {};
+							$scope.apiDetails = {};
+							$scope.mockedResponses = [];
+							$scope.fileDisabled = true;
+							$scope.allMethods = [ "POST", "GET", "PUT",
+									"DELETE", "PATCH" ];
 
-			$scope.turnGreen = function() {
-				$scope.customStyle.style = {
-					"color" : "green"
-				};
-			}
+							$scope.allCockies = document.cookie;
+							if ($scope.allCockies == "") {
+								location.replace("/");
+							}
+							var cookiePair = $scope.allCockies.split("=");
 
-			$scope.turnBlue = function() {
-				$scope.customStyle.style = {
-					"color" : "blue"
-				};
-			}
-
-			$scope.changeFileName = function() {
-				$scope.fileDisabled = false;
-			}
-
-			$http.get("/mitek/response/mocked/cache/"+$scope.finalAppName).then(function(response) {
-				$scope.mockedResponses = response.data;
-
-			});
-			
-			$scope.log = []
-			
-			$scope.addNewApi = function(){
-				$scope.msg = "";
-				$scope.flag = false;
-				
-				if(Object.keys($scope.apiDetails).length < 4){
-					$scope.flag = true;
-					$scope.msg = "fill all fields!";
-				}
-				
-				angular.forEach($scope.mockedResponses, function(a){
-					if(a.api == $scope.apiDetails.api && a.requestMethod == $scope.apiDetails.requestMethod){
-						$scope.flag = true;
-						$scope.msg = "Duplicate entry";
-					}
-				});
-				
-				if(!$scope.flag){
-				angular.forEach($scope.apiDetails, function(value, key) {
-					if(Object.keys($scope.apiDetails).length < 4 || value==undefined || value==""){
-						$scope.flag = true;
-						$scope.msg = "fill all fields!";
-					}else{
-						if(key=="api" && value[0]!="/"){
-							$scope.flag = true;
-							$scope.msg = "API must be start with slash";
-						}
-						if(key=="requestMethod" && $scope.allMethods.indexOf(value)==-1){
-							$scope.flag = true;
-							$scope.msg = "request method must be from the drop down";
-						}
-						if(key=="statusCode" && !angular.isNumber(value)){
-							$scope.flag = true;
-							$scope.msg = "only numbers allowed";
-						}
-						if(key=="response"){
-							try {
-							      JSON.parse(value);
-							    } catch (e) {
-							      $scope.flag = true;
-							      $scope.msg = "Please enter valid json";
-							    }
-						}
-					}
-				}, $scope.log);
-				}
-				
-				if(!$scope.flag){
-					var req = {
-							 method: 'POST',
-							 url: "/cherry/add/"+$scope.finalAppName,
-							 data: $scope.apiDetails
+							if ("finalAppName" == cookiePair[0].trim()) {
+								$scope.finalAppName = decodeURIComponent(cookiePair[1]);
+								$scope.selectedApp = $scope.finalAppName;
 							}
 
-							$http(req).then(function(){
-								//$window.location.reload();
-								if($scope.mockedResponses == null){
-									$scope.mockedResponses = [$scope.apiDetails];
-								}else{
-									$scope.mockedResponses.push($scope.apiDetails);
-								}
-								$scope.apiDetails={};
-							}, function(error){
-								$scope.msg = error.data.message;
-								$scope.flag = true;
-							});
-				}else{
-					console.log("flag is "+$scope.flag);
-				}
-			}
-			
-			$scope.editApiDetails = function(details){
-				
-				var req = {
-						 method: 'POST',
-						 url: "/cherry/remove/"+$scope.finalAppName,
-						 data: details
-						}
+							$http.get("/app/getallapp").then(
+									function(response) {
+										$scope.allApps = response.data;
+										if ($scope.allApps.length == 0) {
+											location.replace("/");
+										}
+									});
 
-						$http(req).then(function(){
-							$scope.mockedResponses.splice($scope.mockedResponses.indexOf(details), 1);
-							details.statusCode = parseInt(details.statusCode);
-							$scope.apiDetails = details;
-						}, function(){
-							console.log("failed")
+							$scope.chooseApp = function() {
+								document.cookie = "finalAppName="
+										+ $scope.selectedApp + ";";
+								$window.location.reload();
+							}
+
+							$http.get("/mitek/getFile").then(
+									function(response) {
+										$scope.file = response.data;
+										if ($scope.file == "No file selected") {
+											$scope.turnGreen();
+										} else {
+											$scope.turnBlue();
+										}
+									});
+
+							$scope.turnGreen = function() {
+								$scope.customStyle.style = {
+									"color" : "green"
+								};
+							}
+
+							$scope.turnBlue = function() {
+								$scope.customStyle.style = {
+									"color" : "blue"
+								};
+							}
+
+							$scope.changeFileName = function() {
+								$scope.fileDisabled = false;
+							}
+							$scope.noApi = false;
+							$http.get("/mitek/response/mocked/cache/"+ $scope.finalAppName)
+									.then(function(response) {
+										$scope.mockedResponses = response.data;
+										if ($scope.mockedResponses == null || $scope.mockedResponses.length < 1) {
+											$scope.noApi = true;
+										}
+
 							});
-			}
-		});
+
+							$scope.log = []
+
+							$scope.addNewApi = function() {
+								$scope.msg = "";
+								$scope.flag = false;
+
+								if (Object.keys($scope.apiDetails).length < 4) {
+									$scope.flag = true;
+									$scope.msg = "fill all fields!";
+								}
+
+								angular
+										.forEach(
+												$scope.mockedResponses,
+												function(a) {
+													if (a.api == $scope.apiDetails.api
+															&& a.requestMethod == $scope.apiDetails.requestMethod) {
+														$scope.flag = true;
+														$scope.msg = "Duplicate entry";
+													}
+												});
+
+								if (!$scope.flag) {
+									angular
+											.forEach(
+													$scope.apiDetails,
+													function(value, key) {
+														if (Object
+																.keys($scope.apiDetails).length < 4
+																|| value == undefined
+																|| value == "") {
+															$scope.flag = true;
+															$scope.msg = "fill all fields!";
+														} else {
+															if (key == "api"
+																	&& value[0] != "/") {
+																$scope.flag = true;
+																$scope.msg = "API must be start with slash";
+															}
+															if (key == "requestMethod"
+																	&& $scope.allMethods
+																			.indexOf(value) == -1) {
+																$scope.flag = true;
+																$scope.msg = "request method must be from the drop down";
+															}
+															if (key == "statusCode"
+																	&& !angular
+																			.isNumber(value)) {
+																$scope.flag = true;
+																$scope.msg = "only numbers allowed";
+															}
+															if (key == "response") {
+																try {
+																	JSON
+																			.parse(value);
+																} catch (e) {
+																	$scope.flag = true;
+																	$scope.msg = "Please enter valid json";
+																}
+															}
+														}
+													}, $scope.log);
+								}
+
+								if (!$scope.flag) {
+									var req = {
+										method : 'POST',
+										url : "/cherry/add/"
+												+ $scope.finalAppName,
+										data : $scope.apiDetails
+									}
+
+									$http(req)
+											.then(
+													function() {
+														//$window.location.reload();
+														if ($scope.mockedResponses == null) {
+															$scope.mockedResponses = [ $scope.apiDetails ];
+														} else {
+															$scope.mockedResponses
+																	.push($scope.apiDetails);
+														}
+														$scope.apiDetails = {};
+													},
+													function(error) {
+														$scope.msg = error.data.message;
+														$scope.flag = true;
+													});
+								} else {
+									console.log("flag is " + $scope.flag);
+								}
+							}
+
+							$scope.editApiDetails = function(details) {
+
+								var req = {
+									method : 'POST',
+									url : "/cherry/remove/"
+											+ $scope.finalAppName,
+									data : details
+								}
+
+								$http(req)
+										.then(
+												function() {
+													$scope.mockedResponses
+															.splice(
+																	$scope.mockedResponses
+																			.indexOf(details),
+																	1);
+													details.statusCode = parseInt(details.statusCode);
+													$scope.apiDetails = details;
+													if ($scope.mockedResponses == null
+															|| $scope.mockedResponses.length < 1) {
+														$scope.noApi = true;
+													}
+												}, function() {
+													console.log("failed")
+												});
+							}
+						});
 	</script>
 
 </body>

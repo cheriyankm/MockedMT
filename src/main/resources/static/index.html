@@ -5,6 +5,8 @@
 <link rel="stylesheet" type="text/css" href="mockStyle.css">
 <link rel="stylesheet"
 	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script
@@ -15,36 +17,92 @@
 		<nav class="navbar navbar-default">
 			<div class="container-fluid">
 				<div class="navbar-header">
-					<a class="navbar-brand" href="#">CherryMock</a>
+					<a class="navbar-brand" href="#">Service Mock</a>
 				</div>
 				<ul class="nav navbar-nav">
 					<li class="active"><a href="index.html">Home</a></li>
-					<li><a href="excel-upload.html">excel
-							upload</a></li>
-					<li><a href="manual-entry.html">Manual
-							entry</a></li>
+					<li><a href="excel-upload.html">excel upload</a></li>
+					<li><a href="manual-entry.html">Manual entry</a></li>
 				</ul>
 				<div class="input-group col-sm-3">
 					<span class="input-group-addon">Select App</span> <select
 						class="form-control" ng-model="selectedApp"
-						ng-change="chooseApp()" ng-options="x for x in allApps" ng-disabled="disableDrop"></select>
+						ng-change="chooseApp()" ng-options="x for x in allApps"
+						ng-disabled="disableDrop"></select>
 				</div>
 			</div>
 		</nav>
-		<div class="jumbotron">
-			<h1>Welcome to CherryMock</h1>
-			<font style="color: red;">{{message}}</font>
-			<div class="input-group col-sm-9">
-				<span class="input-group-addon">Your app name</span>
-				<input type="text" class="form-control col-sm-6" ng-model="appName" required="required" placeholder="Create your new app">
-				<span class="input-group-btn">
-					<button ng-click="addNewApp(appName)" class="btn btn-success">Add
-				new app</button>
-				</span>
+		<div class="jumbotron col-sm-6"
+			style="margin: 0px; padding-right: 30px; width: 49.8%;">
+			<h2>
+				Welcome to Service Mock
+				</h1>
+				<font style="color: red;">{{message}}</font>
+				<div class="input-group col-sm-9" style="float: left !important;">
+					<input type="text" class="form-control col-sm-6" ng-model="appName"
+						required="required" placeholder="Create your new mock service">
+					<span class="input-group-btn">
+						<button ng-click="addNewApp(appName)" class="btn btn-success">Add</button>
+					</span>
+				</div>
+		</div>
+		<div class="jumbotron col-sm-6" style="width: 49.8%; float: right;">
+			<h3 ng-show="selectedApp!=null">{{selectedApp}}</h3>
+			<h3 ng-hide="selectedApp!=null">No mock service selected</h3>
+			<div style="height: 200px; overflow: scroll;">
+				<table class="table table-striped" ng-show="!noApi">
+					<tr>
+						<td></td>
+						<td>Mock API</td>
+					</tr>
+					<tr ng-repeat="x in mockedResponses">
+						<td><button class="btn btn-danger" data-toggle="modal"
+								data-target="#myModal" ng-click="tryIt(x, selectedApp)">
+								<i class="fa fa-play" style="font-size: 24px"></i>
+							</button></td>
+						<td>{{ x.api }}</td>
+					</tr>
+				</table>
 			</div>
 		</div>
-	</div>
+		<footer class="col-sm-12 copyright text-center">
+			Copyright &copy; 2020 <span>Infosys</span>
+		</footer>
 
+		<div class="modal fade" id="myModal" role="dialog">
+			<div class="modal-dialog">
+
+				<!-- Modal content-->
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+						<h4 class="modal-title">Try It</h4>
+					</div>
+					<div class="modal-body">
+						<div class="input-group" style="float: left !important;">
+						<span class="input-group-addon">{{apiDetail.requestMethod}}</span>
+							<input type="text" class="form-control"
+								ng-model="tryItApi" required="required"
+								placeholder="Create your new mock service"> 
+								<span class="input-group-btn">
+									<button ng-click="sendRequest(apiDetail, selectedApp)" class="btn btn-primary">Send</button>
+								</span>
+						</div>
+							<div class="jumbotron col-sm-12" style="padding: 10px; margin: 2px;">
+								<span style="float: right;" ng-show="tryItStatusCode!=null">status: {{tryItStatusCode}}</span>
+							</div>
+							<textarea class="form-control col-sm-12" rows="10">{{tryItResponse}}</textarea>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+
+			</div>
+		</div>
+
+
+	</div>
 	<script>
 		var app = angular.module('myApp', []);
 		app
@@ -60,7 +118,7 @@
 							$scope.disabled = function() {
 								$scope.usable = true;
 							}
-							
+
 							if ("finalAppName" == cookiePair[0].trim()) {
 								$scope.finalAppName = decodeURIComponent(cookiePair[1]);
 								$scope.selectedApp = $scope.finalAppName;
@@ -69,31 +127,86 @@
 							if ($scope.finalAppName == "") {
 								$scope.message = "Please select/create an app";
 								$scope.disableDrop = true;
-							} else {
-								$http
-										.get("/app/getallapp")
-										.then(
-												function(response) {
-													$scope.allApps = response.data;
-													if ($scope.allApps.length == 0) {
-														$scope.usable = false;
-														$scope.disableDrop = true;
-														var res = document.cookie;
-														var multiple = res
-																.split(";");
-														for (var i = 0; i < multiple.length; i++) {
-															var key = multiple[i]
-																	.split("=");
-															document.cookie = key[0]
-																	+ " =; expires = Thu, 01 Jan 1970 00:00:00 UTC";
-														}
-													}
-												});
 							}
+							$scope.noApi = false;
+							$http
+									.get(
+											"/mitek/response/mocked/cache/"
+													+ $scope.selectedApp)
+									.then(
+											function(response) {
+												$scope.mockedResponses = response.data;
+												$scope.noApi = false;
+												if ($scope.mockedResponses == null
+														|| $scope.mockedResponses.length < 1) {
+													$scope.noApi = true;
+												}
 
+											});
+
+							$http
+									.get("/app/getallapp")
+									.then(
+											function(response) {
+												$scope.allApps = response.data;
+												if ($scope.allApps.length == 0) {
+													$scope.usable = false;
+													$scope.disableDrop = true;
+													$scope.selectedApp = null;
+													var res = document.cookie;
+													var multiple = res
+															.split(";");
+													for (var i = 0; i < multiple.length; i++) {
+														var key = multiple[i]
+																.split("=");
+														document.cookie = key[0]
+																+ " =; expires = Thu, 01 Jan 1970 00:00:00 UTC";
+													}
+												} else {
+													console.log($scope.allApps);
+													console
+															.log($scope.allApps.length);
+													$scope.disableDrop = false;
+												}
+											});
+
+							$scope.tryIt = function(apiDetail, selectedApp){
+								$scope.apiDetail = apiDetail;
+								$scope.tryItApi = "http://localhost:2883/mockit/"+selectedApp+apiDetail.api;
+								$scope.tryItResponse = null;
+								$scope.tryItStatusCode = null;
+							}
+							
+							$scope.sendRequest = function(apiDetail, appName){
+								$http({
+									  method: apiDetail.requestMethod,
+									  url: "/mockit/"+appName+apiDetail.api
+									}).then(function successCallback(response) {
+										$scope.tryItStatusCode = response.status;
+									    $scope.tryItResponse = response.data;
+									  }, function errorCallback(response) {
+										$scope.tryItStatusCode = response.status;
+									    $scope.tryItResponse = response.data;
+									  });
+							}
+							
 							$scope.chooseApp = function() {
 								document.cookie = "finalAppName="
 										+ $scope.selectedApp + ";";
+								$http
+										.get(
+												"/mitek/response/mocked/cache/"
+														+ $scope.selectedApp)
+										.then(
+												function(response) {
+													$scope.mockedResponses = response.data;
+													$scope.noApi = false;
+													if ($scope.mockedResponses == null
+															|| $scope.mockedResponses.length < 1) {
+														$scope.noApi = true;
+													}
+
+												});
 							}
 
 							$scope.addNewApp = function(appName) {
