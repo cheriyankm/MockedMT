@@ -123,3 +123,43 @@ span.required {
 .modal-body {
 	min-height: 325px;
 }
+
+.trybutton {
+  display: inline-block;
+  border-radius: 4px;
+  background-color: #f4511e;
+  border: none;
+  color: #FFFFFF;
+  text-align: center;
+  font-size: 28px;
+  padding: 20px;
+  width: 100px;
+  transition: all 0.5s;
+  cursor: pointer;
+  margin: 5px;
+}
+
+.trybutton span {
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  transition: 0.5s;
+}
+
+.trybutton span:after {
+  content: 'Try It';
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  right: 20px;
+  transition: 0.5s;
+}
+
+.trybutton:hover span {
+  padding-right: 35px;
+}
+
+.trybutton:hover span:after {
+  opacity: 1;
+  right: 0;
+}

@@ -33,10 +33,10 @@
 			</div>
 		</nav>
 		<div class="jumbotron col-sm-6"
-			style="margin: 0px; padding-right: 30px; width: 49.8%;">
+			style="margin: 0px; padding-right: 30px; width: 49.8%; height: 351px;">
 			<h2>
 				Welcome to Service Mock
-				</h1>
+				</h2><br><br><br>
 				<font style="color: red;">{{message}}</font>
 				<div class="input-group col-sm-9" style="float: left !important;">
 					<input type="text" class="form-control col-sm-6" ng-model="appName"
@@ -52,13 +52,13 @@
 			<div style="height: 200px; overflow: scroll;">
 				<table class="table table-striped" ng-show="noApi">
 					<tr>
-						<td></td>
-						<td>Mock API</td>
+						<th></th>
+						<th>Mock API</th>
 					</tr>
 					<tr ng-repeat="x in mockedResponses">
-						<td><button class="btn btn-danger" data-toggle="modal"
-								data-target="#myModal" ng-click="tryIt(x, selectedApp)">
-								<i class="fa fa-play" style="font-size: 24px"></i>
+						<td><button class="btn btn-danger trybutton" data-toggle="modal"
+								data-target="#myModal" ng-click="tryIt(x, selectedApp)" style="vertical-align:middle">
+								<span><i class="fa fa-play" style="font-size: 24px"></i></span>
 							</button></td>
 						<td>{{ x.api }}</td>
 					</tr>
@@ -88,7 +88,7 @@
 									<button ng-click="sendRequest(apiDetail, selectedApp)" class="btn btn-primary">Send</button>
 								</span>
 						</div>
-							<div class="jumbotron col-sm-12" style="padding: 10px; margin: 2px;">
+							<div class="jumbotron col-sm-12" style="padding: 10px; margin: 2px; height: 40px;">
 								<span style="float: right;" ng-show="tryItStatusCode!=null">status: {{tryItStatusCode}}</span>
 							</div>
 							<textarea class="form-control col-sm-12" rows="10">{{tryItResponse}}</textarea>

@@ -5,6 +5,8 @@
 <link rel="stylesheet" type="text/css" href="mockStyle.css">
 <link rel="stylesheet"
 	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script
@@ -36,10 +38,10 @@
 			<form>
 				<table class="table">
 					<tr>
-						<td>API<span class="required">*</span></td>
-						<td>Request method<span class="required">*</span></td>
-						<td>Status code<span class="required">*</span></td>
-						<td>Response<span class="required">*</span></td>
+						<th>API<span class="required">*</span></th>
+						<th>Request method<span class="required">*</span></th>
+						<th>Status code<span class="required">*</span></th>
+						<th>Response<span class="required">*</span></th>
 					</tr>
 					<tr>
 						<td><input type="text" class="form-control" ng-model="apiDetails.api"
@@ -59,14 +61,14 @@
 		</div>
 		<table class="table table-striped" ng-show="noApi">
 			<tr>
-				<td></td>
-				<td>Mock API</td>
-				<td>Request method</td>
-				<td>Status code</td>
-				<td>Response</td>
+				<th></th>
+				<th>Mock API</th>
+				<th>Request method</th>
+				<th>Status code</th>
+				<th>Response</th>
 			</tr>
 			<tr ng-repeat="x in mockedResponses">
-				<td><button class="btn btn-danger" ng-click="editApiDetails(x)">edit/delete</button></td>
+				<td><button class="btn btn-danger" ng-click="editApiDetails(x)"><i class="fa fa-pencil" aria-hidden="true"></i>/<i class="fa fa-trash" aria-hidden="true"></i></button></td>
 				<td>{{ x.api }}</td>
 				<td>{{ x.requestMethod }}</td>
 				<td>{{ x.statusCode }}</td>
