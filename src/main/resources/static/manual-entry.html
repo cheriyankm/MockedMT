@@ -19,12 +19,11 @@
 				</div>
 				<ul class="nav navbar-nav">
 					<li><a href="index.html">Home</a></li>
-					<li><a href="excel-upload.html">excel upload</a></li>
-					<li class="active"><a href="manual-entry.html">Manual
-							entry</a></li>
+					<li><a href="excel-upload.html">Upload mock file</a></li>
+					<li class="active"><a href="manual-entry.html">API mock</a></li>
 				</ul>
 				<div class="input-group col-sm-3">
-					<span class="input-group-addon">Select App</span> <select
+					<span class="input-group-addon">Selected service</span> <select
 						class="form-control" ng-model="selectedApp"
 						ng-change="chooseApp()" ng-options="x for x in allApps"
 						ng-disabled="disableDrop"></select>
@@ -32,8 +31,7 @@
 			</div>
 		</nav>
 		<div class="jumbotron col-sm-12">
-			<font ng-hide="mockedResponses.length==0">Use <b>http://localhost:2883/mockit/{app
-					name}</b> as Base URL
+			<font ng-hide="mockedResponses.length==0">Use <b>http://localhost:2883/mockit/{mock service name}</b> as Base URL
 			</font><br> <font ng-show="flag">{{msg}}</font>
 			<form>
 				<table class="table">
@@ -59,7 +57,7 @@
 				</table>
 			</form>
 		</div>
-		<table class="table table-striped" ng-show="!noApi">
+		<table class="table table-striped" ng-show="noApi">
 			<tr>
 				<td></td>
 				<td>Mock API</td>
@@ -147,7 +145,7 @@
 							$http.get("/mitek/response/mocked/cache/"+ $scope.finalAppName)
 									.then(function(response) {
 										$scope.mockedResponses = response.data;
-										if ($scope.mockedResponses == null || $scope.mockedResponses.length < 1) {
+										if ($scope.mockedResponses != null && $scope.mockedResponses.length > 0) {
 											$scope.noApi = true;
 										}
 
@@ -236,6 +234,7 @@
 																	.push($scope.apiDetails);
 														}
 														$scope.apiDetails = {};
+														$scope.noApi = true;
 													},
 													function(error) {
 														$scope.msg = error.data.message;
@@ -250,28 +249,22 @@
 
 								var req = {
 									method : 'POST',
-									url : "/cherry/remove/"
-											+ $scope.finalAppName,
+									url : "/cherry/remove/"+ $scope.finalAppName,
 									data : details
 								}
 
-								$http(req)
-										.then(
-												function() {
-													$scope.mockedResponses
-															.splice(
-																	$scope.mockedResponses
-																			.indexOf(details),
-																	1);
-													details.statusCode = parseInt(details.statusCode);
-													$scope.apiDetails = details;
-													if ($scope.mockedResponses == null
-															|| $scope.mockedResponses.length < 1) {
-														$scope.noApi = true;
-													}
-												}, function() {
-													console.log("failed")
-												});
+								$http(req).then(function() {
+									$scope.mockedResponses.splice($scope.mockedResponses.indexOf(details), 1);
+									details.statusCode = parseInt(details.statusCode);
+									$scope.apiDetails = details;
+									if ($scope.mockedResponses != null && $scope.mockedResponses.length > 0) {
+										$scope.noApi = true;
+									}else{
+										$scope.noApi = false;
+									}
+								}, function() {
+									console.log("failed")
+								});
 							}
 						});
 	</script>

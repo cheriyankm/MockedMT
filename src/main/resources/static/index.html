@@ -21,11 +21,11 @@
 				</div>
 				<ul class="nav navbar-nav">
 					<li class="active"><a href="index.html">Home</a></li>
-					<li><a href="excel-upload.html">excel upload</a></li>
-					<li><a href="manual-entry.html">Manual entry</a></li>
+					<li><a href="excel-upload.html">Upload mock file</a></li>
+					<li><a href="manual-entry.html">API mock</a></li>
 				</ul>
 				<div class="input-group col-sm-3">
-					<span class="input-group-addon">Select App</span> <select
+					<span class="input-group-addon">Selected service</span> <select
 						class="form-control" ng-model="selectedApp"
 						ng-change="chooseApp()" ng-options="x for x in allApps"
 						ng-disabled="disableDrop"></select>
@@ -50,7 +50,7 @@
 			<h3 ng-show="selectedApp!=null">{{selectedApp}}</h3>
 			<h3 ng-hide="selectedApp!=null">No mock service selected</h3>
 			<div style="height: 200px; overflow: scroll;">
-				<table class="table table-striped" ng-show="!noApi">
+				<table class="table table-striped" ng-show="noApi">
 					<tr>
 						<td></td>
 						<td>Mock API</td>
@@ -124,11 +124,11 @@
 								$scope.selectedApp = $scope.finalAppName;
 							}
 
+							$scope.noApi = false;
 							if ($scope.finalAppName == "") {
 								$scope.message = "Please select/create an app";
 								$scope.disableDrop = true;
 							}
-							$scope.noApi = false;
 							$http
 									.get(
 											"/mitek/response/mocked/cache/"
@@ -137,8 +137,11 @@
 											function(response) {
 												$scope.mockedResponses = response.data;
 												$scope.noApi = false;
-												if ($scope.mockedResponses == null
-														|| $scope.mockedResponses.length < 1) {
+												if ($scope.mockedResponses != null
+														&& $scope.mockedResponses.length > 0) {
+													console.log("1");
+													console.log($scope.mockedResponses.length);
+													console.log($scope.mockedResponses);
 													$scope.noApi = true;
 												}
 
@@ -163,9 +166,6 @@
 																+ " =; expires = Thu, 01 Jan 1970 00:00:00 UTC";
 													}
 												} else {
-													console.log($scope.allApps);
-													console
-															.log($scope.allApps.length);
 													$scope.disableDrop = false;
 												}
 											});
@@ -201,8 +201,10 @@
 												function(response) {
 													$scope.mockedResponses = response.data;
 													$scope.noApi = false;
-													if ($scope.mockedResponses == null
-															|| $scope.mockedResponses.length < 1) {
+													if ($scope.mockedResponses != null
+															&& $scope.mockedResponses.length > 0) {
+														console.log("2");
+														console.log($scope.mockedResponses);
 														$scope.noApi = true;
 													}
 

@@ -19,12 +19,11 @@
 				</div>
 				<ul class="nav navbar-nav">
 					<li><a href="index.html">Home</a></li>
-					<li class="active"><a href="excel-upload.html">excel
-							upload</a></li>
-					<li><a href="manual-entry.html">Manual entry</a></li>
+					<li class="active"><a href="excel-upload.html">Upload mock file</a></li>
+					<li><a href="manual-entry.html">API mock</a></li>
 				</ul>
 				<div class="input-group col-sm-3">
-					<span class="input-group-addon">Select App</span> <select
+					<span class="input-group-addon">Selected service</span> <select
 						class="form-control" ng-model="selectedApp"
 						ng-change="chooseApp()" ng-options="x for x in allApps"
 						ng-disabled="disableDrop"></select>
@@ -34,8 +33,7 @@
 		<div class="jumbotron col-sm-12">
 			File name :
 			<p ng-style="customStyle.style">{{file[0]}}</p>
-			<font ng-hide="mockedResponses.length==0">Use <b>http://localhost:2883/mockit/{app
-					name}</b> as Base URL
+			<font ng-hide="mockedResponses.length==0">Use <b>http://localhost:2883/mockit/{mock service name}</b> as Base URL
 			</font>
 			<div class="input-group col-sm-9" style="float: left !important;">
 				<select ng-model="selectedFile" class="form-control col-sm-3"
@@ -47,7 +45,7 @@
 				</span>
 			</div>
 		</div>
-		<table class="table table-striped" ng-show="mockedResponses!=null">
+		<table class="table table-striped" ng-show="noApi">
 			<tr>
 				<td>Mock API</td>
 				<td>Request method</td>
@@ -138,8 +136,8 @@
 					.then(
 							function(response) {
 								$scope.mockedResponses = response.data;
-								if ($scope.mockedResponses == null
-										|| $scope.mockedResponses.length < 1) {
+								if ($scope.mockedResponses != null
+										&& $scope.mockedResponses.length > 0) {
 									$scope.noApi = true;
 								}
 							});
