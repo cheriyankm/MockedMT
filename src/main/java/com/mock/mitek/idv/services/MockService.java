@@ -73,7 +73,7 @@ public class MockService {
 			for (Character k : charArray) {
 				if (k.equals('{')) {
 					flag = true;
-					finalRegex = finalRegex.concat("[A-Za-z0-9_@.%#&+-]*");
+					finalRegex = finalRegex.concat("[A-Za-z0-9_@.%#&+-,]*");
 				} else if (k.equals('}')) {
 					flag = false;
 				} else {
