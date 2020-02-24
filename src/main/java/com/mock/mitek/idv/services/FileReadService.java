@@ -3,6 +3,7 @@ package com.mock.mitek.idv.services;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -20,6 +21,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -39,14 +41,19 @@ public class FileReadService {
 	public JsonNode getAutoResult() throws IOException {
 		return objectMapper.readTree(objectMapper.writeValueAsString(readSheetOption(AppConstants.getFileToRead())));
 	}
-
+	
 	public Set<Map<String, String>> readSheetOption(String fileName) throws IOException {
 		if (fileName == null) {
 			return Collections.emptySet();
 		}
+		FileInputStream file = new FileInputStream(new File(AppConstants.FILE_LOCATION + fileName));
+		return readSheetOption1(file);
+	}
+
+	public Set<Map<String, String>> readSheetOption1(FileInputStream file) throws IOException {
+
 		Set<Map<String, String>> list = new HashSet<>();
 		List<String> keyList = new ArrayList<>();
-		FileInputStream file = new FileInputStream(new File(AppConstants.FILE_LOCATION + fileName));
 
 		Workbook wbread = new HSSFWorkbook(file);
 
@@ -119,5 +126,10 @@ public class FileReadService {
 
 	public JsonNode getAutoResultFromCache(String appName) throws JsonProcessingException, IOException {
 		return objectMapper.readTree(objectMapper.writeValueAsString(AppConstants.getAppApiDetails().get(appName)));
+	}
+
+	public void readFile(MultipartFile file, String appName) throws IOException {
+		AppConstants.setFileToRead(file.getOriginalFilename());
+		AppConstants.getAppApiDetails().put(appName, readSheetOption1((FileInputStream) file.getInputStream()));
 	}
 }

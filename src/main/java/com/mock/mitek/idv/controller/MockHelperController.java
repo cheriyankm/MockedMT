@@ -3,12 +3,18 @@ package com.mock.mitek.idv.controller;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.mock.mitek.idv.services.FileReadService;
@@ -43,5 +49,11 @@ public class MockHelperController {
 	@RequestMapping(value = "/response/mocked/cache/{appName}", method = RequestMethod.GET)
 	public JsonNode getMockedResponseFromCache(@PathVariable String appName) throws IOException {
 		return fileReadService.getAutoResultFromCache(appName);
+	}
+	@PostMapping("/uploadFile/{appName}")
+	public void handleFileUpload(@RequestParam("file") MultipartFile file,
+			@PathVariable String appName) throws IOException {
+		fileReadService.readFile(file, appName);
+
 	}
 }
